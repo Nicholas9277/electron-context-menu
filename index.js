@@ -60,19 +60,37 @@ const create = (win, options) => {
 					}
 				}
 			}),
-			searchWithGoogle: decorateMenuItem({
-				id: 'searchWithGoogle',
-				label: '&Search with Google',
+			searchWithDeepl: decorateMenuItem({
+				id: 'searchWithDeepl',
+				label: '&查询Deepl翻译',
 				visible: hasText,
 				click() {
-					const url = new URL('https://www.google.com/search');
-					url.searchParams.set('q', props.selectionText);
+					const url = new URL('https://www.deepl.com/translator#auto/zh/'+props.selectionText);
+					electron.shell.openExternal(url.toString());
+				}
+			}),
+			searchWithGoogle: decorateMenuItem({
+				id: 'searchWithGoogle',
+				label: '&查询谷歌翻译',
+				visible: hasText,
+				click() {
+					const url = new URL('https://translate.google.com/?sl=auto&tl=zh-CN&op=translate');
+					url.searchParams.set('text', props.selectionText);
+					electron.shell.openExternal(url.toString());
+				}
+			}),
+			searchWithBaidu: decorateMenuItem({
+				id: 'searchWithBaidu',
+				label: '&查询百度翻译',
+				visible: hasText,
+				click() {
+					const url = new URL('https://fanyi.baidu.com/#auto/zh/'+props.selectionText);
 					electron.shell.openExternal(url.toString());
 				}
 			}),
 			cut: decorateMenuItem({
 				id: 'cut',
-				label: 'Cu&t',
+				label: '剪切',
 				enabled: can('Cut'),
 				visible: props.isEditable,
 				click(menuItem) {
@@ -88,7 +106,7 @@ const create = (win, options) => {
 			}),
 			copy: decorateMenuItem({
 				id: 'copy',
-				label: '&Copy',
+				label: '复制',
 				enabled: can('Copy'),
 				visible: props.isEditable || hasText,
 				click(menuItem) {
@@ -104,7 +122,7 @@ const create = (win, options) => {
 			}),
 			paste: decorateMenuItem({
 				id: 'paste',
-				label: '&Paste',
+				label: '粘贴',
 				enabled: editFlags.canPaste,
 				visible: props.isEditable,
 				click(menuItem) {
@@ -121,7 +139,7 @@ const create = (win, options) => {
 			}),
 			saveImage: decorateMenuItem({
 				id: 'saveImage',
-				label: 'Save I&mage',
+				label: '保存图像',
 				visible: props.mediaType === 'image',
 				click(menuItem) {
 					props.srcURL = menuItem.transform ? menuItem.transform(props.srcURL) : props.srcURL;
@@ -130,7 +148,7 @@ const create = (win, options) => {
 			}),
 			saveImageAs: decorateMenuItem({
 				id: 'saveImageAs',
-				label: 'Sa&ve Image As…',
+				label: '图像另存为',
 				visible: props.mediaType === 'image',
 				click(menuItem) {
 					props.srcURL = menuItem.transform ? menuItem.transform(props.srcURL) : props.srcURL;
@@ -139,7 +157,7 @@ const create = (win, options) => {
 			}),
 			copyLink: decorateMenuItem({
 				id: 'copyLink',
-				label: 'Copy Lin&k',
+				label: '复制链接',
 				visible: props.linkURL.length > 0 && props.mediaType === 'none',
 				click(menuItem) {
 					props.linkURL = menuItem.transform ? menuItem.transform(props.linkURL) : props.linkURL;
@@ -152,7 +170,7 @@ const create = (win, options) => {
 			}),
 			saveLinkAs: decorateMenuItem({
 				id: 'saveLinkAs',
-				label: 'Save Link As…',
+				label: '链接另存为',
 				visible: props.linkURL.length > 0 && props.mediaType === 'none',
 				click(menuItem) {
 					props.linkURL = menuItem.transform ? menuItem.transform(props.linkURL) : props.linkURL;
@@ -161,7 +179,7 @@ const create = (win, options) => {
 			}),
 			copyImage: decorateMenuItem({
 				id: 'copyImage',
-				label: 'Cop&y Image',
+				label: '复制图像',
 				visible: props.mediaType === 'image',
 				click() {
 					webContents(win).copyImageAt(props.x, props.y);
@@ -169,7 +187,7 @@ const create = (win, options) => {
 			}),
 			copyImageAddress: decorateMenuItem({
 				id: 'copyImageAddress',
-				label: 'C&opy Image Address',
+				label: '复制图像地址',
 				visible: props.mediaType === 'image',
 				click(menuItem) {
 					props.srcURL = menuItem.transform ? menuItem.transform(props.srcURL) : props.srcURL;
@@ -182,7 +200,7 @@ const create = (win, options) => {
 			}),
 			inspect: () => ({
 				id: 'inspect',
-				label: 'I&nspect Element',
+				label: '打开控制台',
 				click() {
 					win.inspectElement(props.x, props.y);
 
@@ -235,7 +253,9 @@ const create = (win, options) => {
 			defaultActions.separator(),
 			options.showLookUpSelection !== false && defaultActions.lookUpSelection(),
 			defaultActions.separator(),
+			options.showSearchWithDeepl !== false && defaultActions.searchWithDeepl(),
 			options.showSearchWithGoogle !== false && defaultActions.searchWithGoogle(),
+			options.showSearchWithBaidu !== false && defaultActions.searchWithBaidu(),
 			defaultActions.separator(),
 			defaultActions.cut(),
 			defaultActions.copy(),
