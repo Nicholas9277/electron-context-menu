@@ -159,8 +159,9 @@ declare namespace contextMenu {
 
 		@default true
 		*/
+		readonly showSearchWithDeepl?: boolean;
 		readonly showSearchWithGoogle?: boolean;
-
+		readonly showSearchWithBaidu?: boolean;
 		/**
 		Show the `Copy Image` menu item when right-clicking on an image.
 
